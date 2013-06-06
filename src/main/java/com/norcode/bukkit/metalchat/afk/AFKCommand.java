@@ -15,6 +15,9 @@ public class AFKCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] strings) {
-        if (sender.hasPermission("metalchat.commands."))
+        if (sender.hasPermission("metalchat.commands.")) {
+
+        }
+        return false;
     }
 }
