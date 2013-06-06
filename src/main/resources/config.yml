@@ -5,6 +5,7 @@ global-chat-format: '&f<&6{{groupprefix}}{{playerprefix}}{0}{{playersuffix}}{{gr
 afk:
   enabled: true
   auto-afk-time: 120
+  afk-kick-time: 300
   afk-warn: true
   afk-kick: true
   name-prefix: ''

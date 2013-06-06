@@ -22,8 +22,20 @@ commands:
     usage: /<command> [<reason>]
 
 permissions:
+  metalchat.admin:
+    default: op
+    children:
+      metalchat.afk: true
+      metalchat.afk.noauto: true
+      metalchat.afk.nokick: true
+      metalchat.colors: true
+
   metalchat.afk:
     default: true
+  metalchat.afk.noauto:
+    default: op
+  metalchat.afk.nokick:
+    default: op
   metalchat.pm:
     default: true
   metalchat.global.chat:

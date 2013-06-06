@@ -13,6 +13,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
@@ -31,8 +32,14 @@ public class AFKManager implements Listener {
             @Override
             public void run() {
                 Player[] players = plugin.getServer().getOnlinePlayers();
-                if (players.length > 0) {
-                    Player p = players[random.nextInt(players.length)];
+                ArrayList<Player> eligible = new ArrayList<Player>();
+                for (int i=0;i<players.length;i++) {
+                    if (afkTimes.containsKey(players[i].getName())) continue;
+                    if (players[i].hasPermission("metalchat.afk.noauto")) continue;
+                    eligible.add(players[i]);
+                }
+                if (eligible.size() > 0) {
+                    Player p = eligible.get(random.nextInt(eligible.size()));
                     saveState(p);
                     analyzeAFKStates(p);
                 }
