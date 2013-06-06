@@ -1,0 +1,11 @@
+outgoing-pm-format: '&6[&fYou&6->&f{1}&6] &f{2}'
+incoming-pm-format: '&6[&f{0}&6->&fYou&6] &f{2}'
+global-chat-format: '&f<&6{{groupprefix}}{{playerprefix}}{0}{{playersuffix}}{{groupsuffix}}&f> &7{1}'
+
+afk:
+  enabled: true
+  auto-afk-time: 120
+  afk-warn: true
+  afk-kick: true
+  name-prefix: ''
+  name-suffix: ' (AFK)'

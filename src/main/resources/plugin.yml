@@ -1,0 +1,27 @@
+name: MetalChat
+main: com.norcode.bukkit.metalchat.MetalChat
+version: 0.0.1-SNAPSHOT
+author: metalhedd
+depend: [Vault]
+
+commands:
+  tell:
+    aliases: [msg, pm, whisper]
+    description: sends a private message
+    usage: /<command> <player> <message>
+    permission: metalchat.pm
+  reply:
+    aliases: [r, "@"]
+    description: replies to the last PM you recieved, or the last person you sent a PM to.
+    permission: metalchat.pm
+    usage: /<command> <message>
+
+permissions:
+  metalchat.afk:
+    default: true
+  metalchat.pm:
+    default: true
+  metalchat.global.chat:
+    default: true
+  metalchat.colors:
+    default: op

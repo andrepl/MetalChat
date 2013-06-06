@@ -1,0 +1,6 @@
+no-reply-recipient: 'You have nobody to reply to.'
+no-permission: "Sorry, You don't Permission to do that."
+unknown-recipient: "Unknown message recipient: {0}"
+talking-to-yourself: "You would look silly talking to yourself, so you decide against it."
+player-went-afk: "{0} is AFK"
+player-is-no-longer-afk: "{0} is no longer AFK"
