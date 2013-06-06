@@ -28,22 +28,52 @@ public class AFKManager implements Listener {
         this.plugin = plugin;
 
         task = plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
-            private int uncheckedRunCount = 0;
             @Override
             public void run() {
                 Player[] players = plugin.getServer().getOnlinePlayers();
-                Player p = players[random.nextInt(players.length)];
-                saveState(p);
-                analyzeAFKStates(p);
+                if (players.length > 0) {
+                    Player p = players[random.nextInt(players.length)];
+                    saveState(p);
+                    analyzeAFKStates(p);
+                }
             }
         }, 5, 5);
 
     }
 
-    private void analyzeAFKStates(Player p) {
-        // TODO: Examine the list of AFKStates for this player
-        // and determine if he's cheating.
+    public void onDisable() {
+        task.cancel();
+    }
 
+    private void analyzeAFKStates(Player p) {
+        if (playerData.get(p.getName()).size() < 3) {
+            return;
+        }
+        LinkedList<AFKState> states = playerData.get(p.getName());
+        long start = states.peekFirst().timestamp;
+        long end = states.peekLast().timestamp;
+        if (end-start < plugin.getConfig().getLong("auto-afk-time") * 1000) {
+            return;
+        }
+        // He/She has 2 mins worth of afk states. examine them for
+        // afk-like behaviour
+        AFKState prev;
+        AFKState curr;
+        int i = 0;
+        boolean afk = true;
+        for (i=1;i<states.size();i++) {
+            curr = states.get(i);
+            prev = states.get(i-1);
+            if (curr.yaw != prev.yaw) {
+                afk = false;
+                break;
+            }
+        }
+        if (afk) {
+            AFK(p, " [auto]");
+        } else {
+            states.clear();
+        }
     }
 
     public void recordActivity(Player player) {

@@ -49,7 +49,12 @@ public class MetalChat extends JavaPlugin {
             vaultChat = chatProvider.getProvider();
         }
     }
-
+    @Override
+    public void onDisable() {
+        if (afkManager != null) {
+            afkManager.onDisable();
+        }
+    }
     public String getMsg(String key, Object... args) {
         String tpl = messages.getConfig().getString(key);
         if (tpl == null) {
