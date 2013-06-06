@@ -3,6 +3,7 @@ package com.norcode.bukkit.metalchat.afk;
 import org.bukkit.entity.Player;
 
 public class AFKState {
+    long timestamp;
     float pitch;
     float yaw;
     double x;
@@ -12,6 +13,7 @@ public class AFKState {
     boolean sprinting;
 
     public AFKState(Player player) {
+        this.timestamp = System.currentTimeMillis();
         this.pitch = player.getLocation().getPitch();
         this.yaw = player.getLocation().getYaw();
         this.x = player.getLocation().getX();

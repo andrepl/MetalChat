@@ -15,6 +15,11 @@ commands:
     description: replies to the last PM you recieved, or the last person you sent a PM to.
     permission: metalchat.pm
     usage: /<command> <message>
+  afk:
+    aliases: [away]
+    descriptions: toggles away status
+    permission: metalchat.afk
+    usage: /<command> [<reason>]
 
 permissions:
   metalchat.afk:

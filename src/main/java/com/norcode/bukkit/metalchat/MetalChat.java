@@ -1,5 +1,7 @@
 package com.norcode.bukkit.metalchat;
 
+import com.norcode.bukkit.metalchat.afk.AFKCommand;
+import com.norcode.bukkit.metalchat.afk.AFKManager;
 import net.milkbowl.vault.chat.Chat;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -21,12 +23,18 @@ public class MetalChat extends JavaPlugin {
     ConfigAccessor messages;
     public Chat vaultChat;
     private HashMap<String, Object> consoleMetadata = new HashMap<String, Object>();
-
+    private AFKManager afkManager;
     public void onEnable() {
         setupVault();
         saveDefaultConfig();
         getConfig().options().copyDefaults(true);
         saveConfig();
+        if (getConfig().getBoolean("afk.enabled", true)) {
+            afkManager = new AFKManager(this);
+            getServer().getPluginManager().registerEvents(afkManager, this);
+            getLogger().info("Enabling AFK Manager.");
+            getServer().getPluginCommand("afk").setExecutor(new AFKCommand(this));
+        }
         messages = new ConfigAccessor(this, "messages.yml");
         messages.getConfig().options().copyDefaults(true);
         messages.saveConfig();
@@ -177,5 +185,13 @@ public class MetalChat extends JavaPlugin {
 
     public String getMetaString(CommandSender player, String key) {
         return (String) getMetaObject(player, key);
+    }
+
+    public AFKManager getAFKManager() {
+        return afkManager;
+    }
+
+    public boolean isAFK(Player player) {
+        return getAFKManager().isAFK(player);
     }
 }
