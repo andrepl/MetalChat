@@ -20,6 +20,14 @@ commands:
     descriptions: toggles away status
     permission: metalchat.afk
     usage: /<command> [<reason>]
+  chatprefs:
+    aliases: [preferences, prefs]
+    description: adjust some per-player preferences
+    permission: metalchat.prefs
+    usage: |
+      /<command> list - list preferences
+      /<command> get <pref> - get a preference
+      /<command> set <pref> [<value>] - set a preference.
 
 permissions:
   metalchat.admin:
@@ -29,7 +37,10 @@ permissions:
       metalchat.afk.noauto: true
       metalchat.afk.nokick: true
       metalchat.colors: true
+      metalchat.prefs: true
 
+  metalchat.prefs:
+    default: true
   metalchat.afk:
     default: true
   metalchat.afk.noauto:

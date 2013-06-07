@@ -5,9 +5,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class ReplyCommand implements CommandExecutor {
     MetalChat plugin;
 
@@ -44,6 +41,14 @@ public class ReplyCommand implements CommandExecutor {
 
         if (message.endsWith(" ")) {
             message = message.substring(0, message.length()-1);
+        }
+        if (target instanceof Player) {
+            Player p = (Player) target;
+            plugin.getPlayerPrefs(p).getPmChime().play(plugin, p);
+            if (plugin.getAFKManager().isAFK(p)) {
+                commandSender.sendMessage(plugin.getMsg("afk-reply", p.getName(), p.getMetadata(MetaKeys.AFK_REASON).get(0).asString()));
+            }
+
         }
         target.sendMessage(plugin.formatIncomingPrivateMessage(commandSender, target, message));
         commandSender.sendMessage(plugin.formatOutgoingPrivateMessage(commandSender, target, message));

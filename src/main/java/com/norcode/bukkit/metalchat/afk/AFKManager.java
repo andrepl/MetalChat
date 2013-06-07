@@ -101,10 +101,14 @@ public class AFKManager implements Listener {
         if (afkTimes.containsKey(player.getName())) {
             return;
         }
+        if (reason == null) {
+            reason = plugin.getMsg("no-afk-reason");
+        }
         plugin.getServer().broadcastMessage(plugin.getMsg("player-went-afk", player.getDisplayName()));
         player.setMetadata(MetaKeys.AFK_CACHED_DISPLAY_NAME, new FixedMetadataValue(plugin, player.getDisplayName()));
         player.setMetadata(MetaKeys.AFK_CACHED_LIST_NAME, new FixedMetadataValue(plugin, player.getPlayerListName()));
         player.setMetadata(MetaKeys.AFK_MOVING, new FixedMetadataValue(plugin, true));
+        player.setMetadata(MetaKeys.AFK_REASON, new FixedMetadataValue(plugin, reason));
         String afkName = plugin.getConfig().getString("afk.name-prefix", "") + player.getDisplayName() + plugin.getConfig().getString("afk.name-suffix", "");
         player.setPlayerListName(afkName);
         player.setDisplayName(afkName);
@@ -120,7 +124,10 @@ public class AFKManager implements Listener {
         }
         player.setDisplayName(player.getMetadata(MetaKeys.AFK_CACHED_DISPLAY_NAME).get(0).asString());
         player.setPlayerListName(player.getMetadata(MetaKeys.AFK_CACHED_LIST_NAME).get(0).asString());
+        player.removeMetadata(MetaKeys.AFK_CACHED_DISPLAY_NAME, plugin);
+        player.removeMetadata(MetaKeys.AFK_CACHED_LIST_NAME, plugin);
         player.removeMetadata(MetaKeys.AFK_MOVING, plugin);
+        player.removeMetadata(MetaKeys.AFK_REASON, plugin);
         plugin.getServer().broadcastMessage(plugin.getMsg("player-is-no-longer-afk", player.getDisplayName()));
         afkTimes.remove(player.getName());
     }
@@ -170,7 +177,7 @@ public class AFKManager implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onPlayerMove(PlayerMoveEvent event) {
         if (afkTimes.containsKey(event.getPlayer().getName())) {
-            if (!event.getPlayer().hasMetadata(MetaKeys.AFK_MOVING)) {
+            if (!event.getPlayer().hasMetadata(MetaKeys.AFK_MOVING) || event.getFrom().getYaw() != event.getTo().getYaw()) {
                 recordActivity(event.getPlayer());
             }
         } else {

@@ -48,6 +48,13 @@ public class PMCommand implements TabExecutor {
             commandSender.sendMessage(plugin.getMsg("talking-to-yourself"));
             return true;
         }
+        if (target instanceof Player) {
+            Player p = (Player) target;
+            plugin.getPlayerPrefs(p).getPmChime().play(plugin, p);
+            if (plugin.getAFKManager().isAFK(p)) {
+                commandSender.sendMessage(plugin.getMsg("afk-reply", p.getName(), p.getMetadata(MetaKeys.AFK_REASON).get(0).asString()));
+            }
+        }
         target.sendMessage(plugin.formatIncomingPrivateMessage(commandSender, target, message));
         commandSender.sendMessage(plugin.formatOutgoingPrivateMessage(commandSender, target, message));
         plugin.setMeta(target, MetaKeys.PM_REPLY_TO, commandSender.getName());

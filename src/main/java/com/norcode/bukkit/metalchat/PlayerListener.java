@@ -16,6 +16,7 @@ import org.tyrannyofheaven.bukkit.zPermissions.ZPermissionsPlayerUpdateEvent;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.regex.Pattern;
 
 
 public class PlayerListener implements Listener {
@@ -100,9 +101,21 @@ public class PlayerListener implements Listener {
                     }
                     String message = event.getMessage();
                     String formatted = plugin.formatChatMessage(event.getPlayer(), message);
-                    plugin.getServer().broadcastMessage(formatted);
+                    //
+                    PlayerPrefs prefs;
+                    for (Player p: plugin.getServer().getOnlinePlayers()) {
+                        prefs = plugin.getPlayerPrefs(p);
+                        String hln = prefs.getHighlightName();
+                        if (hln != null && message.toLowerCase().contains(hln.toLowerCase())) {
+                            prefs.getHighlightChime().play(plugin, p);
+                            p.sendMessage(plugin.formatChatMessage(event.getPlayer(), plugin.highlight(message, hln)));
+                        } else {
+                            p.sendMessage(formatted);
+                        }
+                    }
                 }
             }.runTask(plugin);
         }
     }
+
 }

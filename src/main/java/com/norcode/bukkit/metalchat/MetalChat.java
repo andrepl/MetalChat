@@ -24,6 +24,7 @@ public class MetalChat extends JavaPlugin {
     public Chat vaultChat;
     private HashMap<String, Object> consoleMetadata = new HashMap<String, Object>();
     private AFKManager afkManager;
+
     public void onEnable() {
         setupVault();
         saveDefaultConfig();
@@ -41,6 +42,8 @@ public class MetalChat extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         getServer().getPluginCommand("tell").setExecutor(new PMCommand(this));
         getServer().getPluginCommand("reply").setExecutor(new ReplyCommand(this));
+        getServer().getPluginCommand("chatprefs").setExecutor(new PrefCommand(this));
+
     }
 
     private void setupVault() {
@@ -83,6 +86,9 @@ public class MetalChat extends JavaPlugin {
 
     private static final Pattern formatPattern = Pattern.compile("(\\{\\{[^}]+}})");
     public String formatMessage(String format, HashMap<String, String> data) {
+        if (data == null) {
+            data = new HashMap<String, String>();
+        }
         String args = "";
         for (Map.Entry<String, String> e: data.entrySet()) {
             args+=e.getKey() + "=" + e.getValue() + ",";
@@ -116,15 +122,20 @@ public class MetalChat extends JavaPlugin {
     public void assignChatMeta(Player player) {
         HashMap<String, String> meta = new HashMap<String, String>();
         String group = vaultChat.getPrimaryGroup(player);
-        getLogger().info("assigning chat meta for player " + player + " in group " + group);
         if (group != null) {
             meta.put("groupprefix", vaultChat.getGroupPrefix((String) null, group));
             meta.put("groupsuffix", vaultChat.getGroupSuffix((String) null, group));
         }
         meta.put("playerprefix", vaultChat.getPlayerPrefix((String) null, player.getName()));
         meta.put("playersuffix", vaultChat.getPlayerSuffix((String) null, player.getName()));
-        getLogger().info("assigned meta " + meta);
         player.setMetadata(MetaKeys.CHAT_FORMAT_DATA, new FixedMetadataValue(this, meta));
+
+        // load PlayerPrefs
+        player.setMetadata(MetaKeys.PLAYER_PREFS, new FixedMetadataValue(this, PlayerPrefs.forPlayer(this, player)));
+    }
+
+    public PlayerPrefs getPlayerPrefs(Player p) {
+        return (PlayerPrefs) p.getMetadata(MetaKeys.PLAYER_PREFS).get(0).value();
     }
 
     public String formatIncomingPrivateMessage(CommandSender commandSender, CommandSender target, String message) {
@@ -149,14 +160,27 @@ public class MetalChat extends JavaPlugin {
 
     public String formatChatMessage(CommandSender sender, String message) {
         String fmt = getConfig().getString("global-chat-format");
-        getLogger().info("Formatting: " + fmt);
         String formatted = formatMessage(fmt, (HashMap<String, String>) getMetaObject(sender, MetaKeys.CHAT_FORMAT_DATA));
-        getLogger().info("formatted: " + formatted);
         message = ChatColor.translateAlternateColorCodes('&', message);
         if (!sender.hasPermission("metalchat.colors")) {
             message = ChatColor.stripColor(message);
         }
         return MessageFormat.format(formatted, getDisplayName(sender), message);
+    }
+
+    public String highlight(String message, String hln) {
+        String lowerMsg = message.toLowerCase();
+        StringBuilder sb = new StringBuilder();
+        int sIdx = lowerMsg.indexOf(hln.toLowerCase());
+        String first = message.substring(0,sIdx);
+        String lastColor = ChatColor.getLastColors(first);
+        sb.append(first);
+        sb.append(ChatColor.UNDERLINE.toString());
+        sb.append(message.substring(sIdx,sIdx+hln.length()));
+        sb.append(ChatColor.RESET + lastColor);
+        sb.append(message.substring(sIdx+hln.length()));
+        return sb.toString();
+
     }
 
     private String getDisplayName(CommandSender sender) {
