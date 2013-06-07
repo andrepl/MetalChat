@@ -20,7 +20,26 @@ public enum Chime {
                 }
             }, 10);
         }
+    },
+
+    G_CHORD() {
+        @Override
+        public void play(final MetalChat plugin, final Player p) {
+                p.playSound(p.getLocation(), Sound.NOTE_PIANO, 10.0f, 1.059463f);
+                p.playSound(p.getLocation(), Sound.NOTE_PIANO, 10.0f, 1.334840f);
+                p.playSound(p.getLocation(), Sound.NOTE_PIANO, 10.0f, 0.793701f);
+        }
+    },
+
+    D_CHORD() {
+        @Override
+        public void play(final MetalChat plugin, final Player p) {
+            p.playSound(p.getLocation(), Sound.NOTE_PIANO, 10.0f, 0.793701f);
+            p.playSound(p.getLocation(), Sound.NOTE_PIANO, 10.0f, 1.0f);
+            p.playSound(p.getLocation(), Sound.NOTE_PIANO, 10.0f, 1.189207f);
+        }
     };
+
 
     public abstract void play(final MetalChat plugin, final Player p);
 
@@ -34,5 +53,6 @@ public enum Chime {
         }
         return s;
     }
+
 }
 

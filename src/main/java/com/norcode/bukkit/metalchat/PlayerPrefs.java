@@ -17,17 +17,23 @@ public class PlayerPrefs {
     public static PlayerPrefs forPlayer(MetalChat plugin, Player player) {
         PlayerPrefs pp = new PlayerPrefs(plugin, player.getName());
         pp.highlightName = plugin.vaultChat.getPlayerInfoString(player, IS_HIGHLIGHT_NAME, player.getName());
-        pp.pmChime = Chime.valueOf(plugin.vaultChat.getPlayerInfoString(player, IS_PM_CHIME, "NONE"));
-        pp.highlightChime = Chime.valueOf(plugin.vaultChat.getPlayerInfoString(player, IS_HIGHLIGHT_CHIME, "NONE"));
+        try {
+            pp.pmChime = Chime.valueOf(plugin.vaultChat.getPlayerInfoString(player, IS_PM_CHIME, "NONE"));
+        } catch (IllegalArgumentException ex) {
+            pp.pmChime = Chime.NONE;
+        }
+        try {
+            pp.highlightChime = Chime.valueOf(plugin.vaultChat.getPlayerInfoString(player, IS_HIGHLIGHT_CHIME, "NONE"));
+        } catch (IllegalArgumentException ex) {
+            pp.pmChime = Chime.NONE;
+        }
+
         return pp;
     }
 
     private PlayerPrefs(MetalChat plugin, String playerName) {
         this.plugin = plugin;
         this.playerName = playerName;
-        this.highlightName = highlightName;
-        this.pmChime = pmChime;
-        this.highlightChime = highlightChime;
     }
 
     public String getHighlightName() {

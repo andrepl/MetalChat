@@ -1,22 +1,15 @@
 package com.norcode.bukkit.metalchat;
 
-
-import com.sun.org.apache.xerces.internal.util.MessageFormatter;
-import org.bukkit.ChatColor;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerChatTabCompleteEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.tyrannyofheaven.bukkit.zPermissions.ZPermissionsPlayerUpdateEvent;
 
-import java.text.MessageFormat;
 import java.util.List;
-import java.util.regex.Pattern;
 
 
 public class PlayerListener implements Listener {
@@ -76,7 +69,6 @@ public class PlayerListener implements Listener {
                         event.getPlayer().sendMessage(plugin.getMsg("no-permission"));
                         return;
                     }
-                    Player recipient = null;
                     String msg = null;
                     if (event.getMessage().startsWith("@ ")) {
                         // replying.
