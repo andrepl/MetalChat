@@ -33,7 +33,7 @@ public class AFKCommand implements CommandExecutor {
                 if (reason.endsWith(" ")) {
                     reason = reason.substring(0,reason.length()-1);
                 }
-                plugin.getAFKManager().AFK((Player) sender, reason);
+                plugin.getAFKManager().AFK((Player) sender, false, reason);
                 return true;
             }
         }

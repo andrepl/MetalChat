@@ -59,7 +59,10 @@ public class AFKManager implements Listener {
         LinkedList<AFKState> states = playerData.get(p.getName());
         long start = states.peekFirst().timestamp;
         long end = states.peekLast().timestamp;
-        if (end-start < plugin.getConfig().getLong("auto-afk-time") * 1000) {
+        long stateSpan = end-start;
+        long autoAFKTime = plugin.getConfig().getLong("afk.auto-afk-time", 120) * 1000;
+
+        if (stateSpan < autoAFKTime) {
             return;
         }
         // He/She has 2 mins worth of afk states. examine them for
@@ -68,18 +71,19 @@ public class AFKManager implements Listener {
         AFKState curr;
         int i = 0;
         boolean afk = true;
+        boolean isMoving = false;
         for (i=1;i<states.size();i++) {
             curr = states.get(i);
             prev = states.get(i-1);
+            if (prev.x != curr.x || prev.y != curr.y || prev.z != curr.z) {
+                isMoving = true;
+            }
             if (curr.yaw != prev.yaw) {
                 afk = false;
-                break;
             }
         }
         if (afk) {
-            AFK(p, " [auto]");
-        } else {
-            states.clear();
+            AFK(p, isMoving, " [auto]");
         }
     }
 
@@ -93,14 +97,14 @@ public class AFKManager implements Listener {
         }
     }
 
-    public void AFK(Player player, String reason) {
+    public void AFK(Player player, boolean moving, String reason) {
         if (afkTimes.containsKey(player.getName())) {
             return;
         }
         plugin.getServer().broadcastMessage(plugin.getMsg("player-went-afk", player.getDisplayName()));
         player.setMetadata(MetaKeys.AFK_CACHED_DISPLAY_NAME, new FixedMetadataValue(plugin, player.getDisplayName()));
         player.setMetadata(MetaKeys.AFK_CACHED_LIST_NAME, new FixedMetadataValue(plugin, player.getPlayerListName()));
-
+        player.setMetadata(MetaKeys.AFK_MOVING, new FixedMetadataValue(plugin, true));
         String afkName = plugin.getConfig().getString("afk.name-prefix", "") + player.getDisplayName() + plugin.getConfig().getString("afk.name-suffix", "");
         player.setPlayerListName(afkName);
         player.setDisplayName(afkName);
@@ -111,8 +115,12 @@ public class AFKManager implements Listener {
         if (!afkTimes.containsKey(player.getName())) {
             return;
         }
+        if (playerData.containsKey(player.getName())) {
+            playerData.get(player.getName()).clear();
+        }
         player.setDisplayName(player.getMetadata(MetaKeys.AFK_CACHED_DISPLAY_NAME).get(0).asString());
         player.setPlayerListName(player.getMetadata(MetaKeys.AFK_CACHED_LIST_NAME).get(0).asString());
+        player.removeMetadata(MetaKeys.AFK_MOVING, plugin);
         plugin.getServer().broadcastMessage(plugin.getMsg("player-is-no-longer-afk", player.getDisplayName()));
         afkTimes.remove(player.getName());
     }
@@ -162,7 +170,9 @@ public class AFKManager implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onPlayerMove(PlayerMoveEvent event) {
         if (afkTimes.containsKey(event.getPlayer().getName())) {
-            recordActivity(event.getPlayer());
+            if (!event.getPlayer().hasMetadata(MetaKeys.AFK_MOVING)) {
+                recordActivity(event.getPlayer());
+            }
         } else {
             saveState(event.getPlayer());
         }
@@ -175,11 +185,8 @@ public class AFKManager implements Listener {
             return;
         }
         AFKState state = states.peekLast();
-        if (System.currentTimeMillis() - state.timestamp > 5000) {
+        if (System.currentTimeMillis() - state.timestamp > 10000) {
             states.add(new AFKState(player));
-            while (states.size() > 5) {
-                states.pollFirst();
-            }
         }
     }
 
