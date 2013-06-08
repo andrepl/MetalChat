@@ -7,7 +7,11 @@
     <groupId>MetalChat</groupId>
     <artifactId>MetalChat</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-
+    <properties>
+        <project.main>com.norcode.bukkit.metalchat.MetalChat</project.main>
+        <project.depend>[Vault, zPermissions]</project.depend>
+        <project.author>metalhedd</project.author>
+    </properties>
     <repositories>
         <repository>
             <id>bukkit-releases-repo</id>
