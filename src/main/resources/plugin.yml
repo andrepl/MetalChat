@@ -1,6 +1,6 @@
 name: MetalChat
 main: com.norcode.bukkit.metalchat.MetalChat
-version: 0.0.1-SNAPSHOT
+version: ${project.version}
 author: metalhedd
 depend: [Vault]
 

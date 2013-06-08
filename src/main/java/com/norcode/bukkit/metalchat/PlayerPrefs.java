@@ -52,7 +52,6 @@ public class PlayerPrefs {
     public void setPmChime(Chime pmChime) {
         this.pmChime = pmChime;
         Player p = plugin.getServer().getPlayer(playerName);
-        plugin.getLogger().info("setPlayerInfoString(" + playerName + ", " + IS_PM_CHIME + ", " + this.pmChime.name());
         plugin.vaultChat.setPlayerInfoString(p, IS_PM_CHIME, this.pmChime.name());
     }
 

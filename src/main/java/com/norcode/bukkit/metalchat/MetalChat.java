@@ -93,7 +93,6 @@ public class MetalChat extends JavaPlugin {
         for (Map.Entry<String, String> e: data.entrySet()) {
             args+=e.getKey() + "=" + e.getValue() + ",";
         }
-        getLogger().info("FormatMessage:args:" + args);
         StringBuffer sb = new StringBuffer();
         format = ChatColor.translateAlternateColorCodes('&', format);
         Matcher m = formatPattern.matcher(format);
