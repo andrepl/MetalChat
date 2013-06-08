@@ -110,7 +110,11 @@ public class AFKManager implements Listener {
         player.setMetadata(MetaKeys.AFK_MOVING, new FixedMetadataValue(plugin, true));
         player.setMetadata(MetaKeys.AFK_REASON, new FixedMetadataValue(plugin, reason));
         String afkName = plugin.getConfig().getString("afk.name-prefix", "") + player.getDisplayName() + plugin.getConfig().getString("afk.name-suffix", "");
+        if (afkName.length() > 16) {
+            afkName = afkName.substring(0,15);
+        }
         player.setPlayerListName(afkName);
+
         player.setDisplayName(afkName);
         afkTimes.put(player.getName(), System.currentTimeMillis());
     }
